@@ -5,6 +5,8 @@
  * All coordinates assume origin_center: true (0, 0 = canvas centre).
  */
 
+import { Settings } from "../../ExperimentSettings.js";
+
 // ── Oriented triangle ────────────────────────────────────────────────────────
 
 /**
@@ -19,18 +21,19 @@
  * @param {number} y            Centre y (origin_center coords).
  * @param {number} orientationDeg  Orientation in degrees [0, 360).
  * @param {object} [opts]
- * @param {number} [opts.base=16]       Base width in px.
- * @param {number} [opts.height=28]     Height (apex to base) in px.
- * @param {string} [opts.fillColor='oklch(0.75 0 0)']  Fill colour.
- * @param {string} [opts.lineColor='oklch(0.75 0 0)']  Stroke colour.
- * @param {number} [opts.lineWidth=1]
+ * @param {number} [opts.base]       Base width in px.
+ * @param {number} [opts.height]     Height (apex to base) in px.
+ * @param {string} [opts.fillColor]  Fill colour (defaults from Settings.stimuli).
+ * @param {string} [opts.lineColor]  Stroke colour (defaults from Settings.stimuli).
+ * @param {number} [opts.lineWidth]
  */
 export function makeOrientedTriangleStimulus(x, y, orientationDeg, opts = {}) {
+  const { lightness, chroma } = Settings.stimuli;
   const {
     base = 16,
     height = 28,
-    fillColor = "oklch(0.75 0 0)",
-    lineColor = "oklch(0.75 0 0)",
+    fillColor = `oklch(${lightness} ${chroma} 0)`,
+    lineColor = `oklch(${lightness} ${chroma} 0)`,
     lineWidth = 1,
   } = opts;
 
@@ -93,12 +96,16 @@ export function makeOrientedTriangleStimulus(x, y, orientationDeg, opts = {}) {
  * @param {number} y          Centre y (origin_center coords).
  * @param {number} hueDeg     Hue angle in degrees [0, 360).
  * @param {object} [opts]
- * @param {number} [opts.radius=10]       Radius in px.
- * @param {number} [opts.lightness=0.7]   OKLCH lightness.
- * @param {number} [opts.chroma=0.15]     OKLCH chroma.
+ * @param {number} [opts.radius]       Radius in px.
+ * @param {number} [opts.lightness]    OKLCH lightness (defaults from Settings.stimuli).
+ * @param {number} [opts.chroma]       OKLCH chroma (defaults from Settings.stimuli).
  */
 export function makeColorPatchStimulus(x, y, hueDeg, opts = {}) {
-  const { radius = 10, lightness = 0.7, chroma = 0.15 } = opts;
+  const {
+    radius = 10,
+    lightness = Settings.stimuli.lightness,
+    chroma = Settings.stimuli.chroma,
+  } = opts;
 
   return {
     obj_type: "circle",
@@ -109,5 +116,27 @@ export function makeColorPatchStimulus(x, y, hueDeg, opts = {}) {
     radius,
     fill_color: `oklch(${lightness} ${chroma} ${hueDeg})`,
     line_color: `oklch(${lightness} ${chroma} ${hueDeg})`,
+  };
+}
+
+// ── Fixation cross ───────────────────────────────────────────────────────────
+
+/**
+ * Create a jspsych-psychophysics fixation cross at canvas centre.
+ *
+ * @param {object} [opts]
+ * @param {number} [opts.lineLength]  Arm length in px.
+ */
+export function makeFixationCross(opts = {}) {
+  const { lineLength = 12 } = opts;
+
+  return {
+    obj_type: "cross",
+    stim_type: "fixation",
+    origin_center: true,
+    startX: 0,
+    startY: 0,
+    line_length: lineLength,
+    line_color: "oklch(1 0 0)", // White fixation cross
   };
 }

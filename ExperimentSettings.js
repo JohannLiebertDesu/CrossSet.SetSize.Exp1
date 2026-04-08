@@ -33,11 +33,19 @@ export const Settings = {
 
   // ── Display ─────────────────────────────────────────────────────────────────
   display: {
-    // Background colour for experiment/practice trials (applied via css_classes: "trial-bg").
+    // Background colour for experiment/practice trials.
     // Standard mid-grey is the convention in vision science — neutral adaptation state
     // for luminance contrast. OKLCH 0.6 lightness, zero chroma = perceptually uniform grey.
     // Any CSS colour format works (hex, rgb, hsl, oklch, named).
     trialBackgroundColor: "oklch(0.6 0 0)",
+  },
+
+  // ── Stimulus Appearance ────────────────────────────────────────────────────
+  stimuli: {
+    // Global OKLCH lightness and chroma for all stimulus items.
+    // These are used by the stimulus factories in stimuli.js as defaults.
+    lightness: 0.8,
+    chroma: 0.07,
   },
 
   // ── Study Information (used by consent pages) ──────────────────────────────

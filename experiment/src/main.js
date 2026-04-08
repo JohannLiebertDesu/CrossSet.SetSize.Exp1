@@ -16,7 +16,7 @@ import jsPsychPsychophysics from "@kurokida/jspsych-psychophysics";
 jsPsychPsychophysics.info.parameters.canvas_offsetY.default = 0;
 
 import { getRingPositions } from "../../functions/experiment/ringPositions.js";
-import { makeTriangleStimulus, makeColorPatchStimulus } from "../../functions/experiment/stimuli.js";
+import { makeOrientedTriangleStimulus, makeColorPatchStimulus, makeFixationCross } from "../../functions/experiment/stimuli.js";
 
 // Since we load the following import after the jspsych/css/jspsych.css import, it always wins 
 // -> that way for modifications of the css we never need to kack jsPsych's own CSS
@@ -84,14 +84,7 @@ function makeTimeline(jsPsych, blurMonitor) {
         stims.push(makeColorPatchStimulus(positions[i].x, positions[i].y, hue));
       }
 
-      stims.push({
-        obj_type: "cross",
-        origin_center: true,
-        startX: 0,
-        startY: 0,
-        line_length: 12,
-        line_color: "white",
-      });
+      stims.push(makeFixationCross());
 
       return stims;
     },
