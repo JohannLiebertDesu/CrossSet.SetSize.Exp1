@@ -5,7 +5,7 @@ export const Settings = {
     // Set to true when distributing through Prolific.
     // Prolific manages its own participant counts, so the cap check is skipped.
     // Also adjusts consent text (compensation, prescreening, redirect info).
-    useProlific: false,
+    useProlific: true,
 
     // Set to a number to cap enrollment at that many participants.
     // The cap is checked at consent using the batch session's "started" counter.

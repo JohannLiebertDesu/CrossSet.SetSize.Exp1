@@ -17,7 +17,7 @@ jsPsychPsychophysics.info.parameters.canvas_offsetY.default = 0;
 
 import { getRingPositions } from "../../functions/experiment/ringPositions.js";
 import { makeOrientedTriangleStimulus, makeColorPatchStimulus, makeFixationCross } from "../../functions/experiment/stimuli.js";
-import { makePsychophysicsTrial } from "../../functions/experiment/trialTemplates.js";
+import { makePsychophysicsTrial } from "../../functions/experiment/trialRendering.js";
 
 // Since we load the following import after the jspsych/css/jspsych.css import, it always wins 
 // -> that way for modifications of the css we never need to kack jsPsych's own CSS
