@@ -5,16 +5,19 @@
    ────────────────────────────────────────────────────────────── */
 @import "../../styles/common.css";
 
-/* ── Trial background ─────────────────────────────────────────
-   Apply to experiment/practice trials via css_classes: "trial-bg".
-   jsPsych adds this class to .jspsych-display-element for the
-   duration of the trial and removes it automatically afterwards.
-   Instructions, breaks, and other non-trial screens keep the
-   default off-white from common.css.
+/* Reset padding/margin that common.css and browser defaults add to the
+   jsPsych content wrapper. Without this, the psychophysics canvas
+   (sized to window.innerWidth/Height) overflows its container and
+   creates scrollbars.  Applied via css_classes: "canvas-trial". */
+.canvas-trial {
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
 
-   Usage:
-     { type: SomePlugin, stimulus: "...", css_classes: "trial-bg" }
-   ────────────────────────────────────────────────────────────── */
-.trial-bg {
-  background: var(--trial-bg, oklch(0.6 0 0));
+/* The jspsych-display-element parent has overflow-y: auto, which is
+   the actual source of the scrollbar. When a canvas-trial is active,
+   propagate overflow: hidden up to it via the :has() selector. */
+.jspsych-display-element:has(.canvas-trial) {
+  overflow: hidden !important;
 }

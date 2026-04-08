@@ -11,6 +11,10 @@ import FullscreenPlugin from "@jspsych/plugin-fullscreen";
 import HtmlKeyboardResponsePlugin from "@jspsych/plugin-html-keyboard-response";
 import jsPsychPsychophysics from "@kurokida/jspsych-psychophysics";
 
+// The plugin defaults canvas_offsetY to 8 to avoid scrollbars, but our
+// .canvas-trial CSS class handles that with overflow: hidden instead.
+jsPsychPsychophysics.info.parameters.canvas_offsetY.default = 0;
+
 import { getRingPositions } from "../../functions/experiment/ringPositions.js";
 import { makeTriangleStimulus, makeColorPatchStimulus } from "../../functions/experiment/stimuli.js";
 
@@ -63,7 +67,7 @@ function makeTimeline(jsPsych, blurMonitor) {
   timeline.push({
     type: jsPsychPsychophysics,
     background_color: Settings.display.trialBackgroundColor,
-    //css_classes: "trial-bg",
+    css_classes: "canvas-trial",
     response_type: "key",
     choices: "ALL_KEYS",
     stimuli: () => {
@@ -105,13 +109,6 @@ function makeTimeline(jsPsych, blurMonitor) {
  * The entire start() function exists because of a single constraint: you don't know where your code will run until runtime (JATOS or local)
  */
 async function start() {
-  // Push the trial background colour from Settings into a CSS variable so that
-  // style.css can reference it via var(--trial-bg). This keeps the colour
-  // configurable from ExperimentSettings.js without touching any CSS file.
-  document.documentElement.style.setProperty(
-    "--trial-bg",
-    Settings.display.trialBackgroundColor
-  );
 
   // The async keyword lets us use await inside the function, which lets us pause until we finish a process.
   // Loading the JATOS script takes time (the browser needs to fetch it from the network)
