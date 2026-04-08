@@ -15,6 +15,17 @@
  */
 import BrowserCheckPlugin from "@jspsych/plugin-browser-check";
 
+/**
+ * Quick test: can the browser's Canvas 2D context parse an OKLCH colour string?
+ * If not, fillStyle silently rejects the value and keeps its previous colour.
+ */
+function supportsOklch() {
+  const c = document.createElement("canvas").getContext("2d");
+  c.fillStyle = "#000"; // known baseline
+  c.fillStyle = "oklch(0.5 0.1 180)";
+  return c.fillStyle !== "#000000"; // changed → browser understood OKLCH
+}
+
 export function makeScreenCheck(jsPsych, settings, blurMonitor) {
   return {
     type: BrowserCheckPlugin,
@@ -32,6 +43,17 @@ export function makeScreenCheck(jsPsych, settings, blurMonitor) {
              <h2 class="abort-message-title">Screen Too Small</h2>
              <p>Your screen does not meet the minimum size requirements for this experiment.</p>
              <p>Please use a <strong>desktop or laptop computer</strong> with a larger screen.</p>
+           </div>`
+        );
+      } else if (!supportsOklch()) {
+        // Browser cannot render OKLCH colours on canvas — stimuli would be invisible.
+        jsPsych.data.addProperties({ experiment_status: "failed_resize" });
+        if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+        jsPsych.abortExperiment(
+          `<div class="abort-message">
+             <h2 class="abort-message-title">Browser Not Supported</h2>
+             <p>Your browser does not support the colour system required by this experiment.</p>
+             <p>Please update your browser to the latest version, or try <strong>Google Chrome</strong>.</p>
            </div>`
         );
       } else {
