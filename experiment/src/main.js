@@ -138,16 +138,18 @@ async function start() {
       const trials = jsPsych.data.get().values();
       const status = trials.length > 0 ? trials[0].experiment_status : undefined;
       const failed =
-        status === "failed_resize" || status === "failed_attention_check";
+        status === "failed_resize" ||
+        status === "failed_color_support" ||
+        status === "failed_attention_check";
 
       if (inJatos) {
         // Open the file cabinet (data), grab the files (get()), and photocopy them to a document any browser can handle (.json()).
         const resultJson = jsPsych.data.get().json();
 
         if (failed) {
-          // Screen-size failures free the enrollment slot — the participant
-          // never could have run, so we release the "started" count.
-          if (status === "failed_resize") {
+          // Screen-size and color-support failures free the enrollment slot —
+          // the participant never could have run, so we release the "started" count.
+          if (status === "failed_resize" || status === "failed_color_support") {
             for (let attempt = 0; attempt < 2; attempt++) {
               try {
                 const n = window.jatos.batchSession.get("started") ?? 0;
@@ -164,9 +166,10 @@ async function start() {
           // The message (max 255 chars) appears in JATOS's "message" results column.
           if (Settings.recruitment.useProlific) {
             // Redirect to Prolific with the appropriate failure code.
-            const redirectUrl = status === "failed_resize"
-              ? ProlificFailCodes.screenedOut
-              : ProlificFailCodes.attentionFailed;
+            const redirectUrl =
+              status === "failed_resize" || status === "failed_color_support"
+                ? ProlificFailCodes.screenedOut
+                : ProlificFailCodes.attentionFailed;
             window.jatos.endStudyAndRedirect(redirectUrl, false, status);
           } else {
             window.jatos.endStudy(resultJson, false, status);

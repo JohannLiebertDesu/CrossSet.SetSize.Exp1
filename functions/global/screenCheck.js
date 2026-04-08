@@ -47,7 +47,7 @@ export function makeScreenCheck(jsPsych, settings, blurMonitor) {
         );
       } else if (!supportsOklch()) {
         // Browser cannot render OKLCH colours on canvas — stimuli would be invisible.
-        jsPsych.data.addProperties({ experiment_status: "failed_resize" });
+        jsPsych.data.addProperties({ experiment_status: "failed_color_support" });
         if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
         jsPsych.abortExperiment(
           `<div class="abort-message">
