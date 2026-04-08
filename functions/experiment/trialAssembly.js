@@ -8,13 +8,12 @@
  *   4. Recall      — probe cue + response wheel (placeholder for now)
  */
 
+import { Settings } from "../../ExperimentSettings.js";
 import { makePsychophysicsTrial } from "./trialRendering.js";
 import { getRingPositions } from "./ringPositions.js";
 import { makeOrientedTriangleStimulus, makeColorPatchStimulus, makeFixationCross } from "./stimuli.js";
 
-const FIXATION_DURATION_MS = 500;
-const SAMPLE_DURATION_PER_ITEM_MS = 150;
-const RETENTION_DURATION_MS = 1000;
+const { fixationDurationMs, sampleDurationPerItemMs, retentionDurationMs } = Settings.timing;
 
 // ── Stimulus builder ─────────────────────────────────────────────────────
 
@@ -71,13 +70,13 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, ringRadi
     practice,
     choices: "NO_KEYS",
     response_ends_trial: false,
-    trial_duration: FIXATION_DURATION_MS,
+    trial_duration: fixationDurationMs,
     stimuli: [makeFixationCross()],
     data: { ...sharedData, phase: "fixation" },
   });
 
   // 2. Sample — stimuli + fixation cross, 150 ms × totalItems
-  const sampleDuration = SAMPLE_DURATION_PER_ITEM_MS * spec.totalItems;
+  const sampleDuration = sampleDurationPerItemMs * spec.totalItems;
   const sample = makePsychophysicsTrial({
     trialID,
     blockID,
@@ -100,7 +99,7 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, ringRadi
     practice,
     choices: "NO_KEYS",
     response_ends_trial: false,
-    trial_duration: RETENTION_DURATION_MS,
+    trial_duration: retentionDurationMs,
     stimuli: [makeFixationCross()],
     data: { ...sharedData, phase: "retention" },
   });

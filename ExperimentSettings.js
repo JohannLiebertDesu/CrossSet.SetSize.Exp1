@@ -40,6 +40,13 @@ export const Settings = {
     trialBackgroundColor: "oklch(0.6 0 0)",
   },
 
+  // ── Trial Timing ───────────────────────────────────────────────────────────
+  timing: {
+    fixationDurationMs: 500,
+    sampleDurationPerItemMs: 150,
+    retentionDurationMs: 1000,
+  },
+
   // ── Stimulus Appearance ────────────────────────────────────────────────────
   stimuli: {
     // Global OKLCH lightness and chroma for all stimulus items.
