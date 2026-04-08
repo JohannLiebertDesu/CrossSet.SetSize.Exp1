@@ -15,9 +15,7 @@ import jsPsychPsychophysics from "@kurokida/jspsych-psychophysics";
 // .canvas-trial CSS class handles that with overflow: hidden instead.
 jsPsychPsychophysics.info.parameters.canvas_offsetY.default = 0;
 
-import { getRingPositions } from "../../functions/experiment/ringPositions.js";
-import { makeOrientedTriangleStimulus, makeColorPatchStimulus, makeFixationCross } from "../../functions/experiment/stimuli.js";
-import { makePsychophysicsTrial } from "../../functions/experiment/trialRendering.js";
+import { assembleExperiment } from "../../functions/experiment/experimentAssembly.js";
 
 // Since we load the following import after the jspsych/css/jspsych.css import, it always wins 
 // -> that way for modifications of the css we never need to kack jsPsych's own CSS
@@ -63,29 +61,14 @@ function makeTimeline(jsPsych, blurMonitor) {
   // Edit the pages in experiment/src/instructions.js.
   timeline.push(makeInstructions());
 
-  // ── Visual test: render stimuli on the invisible ring ──
-  // This is a temporary demo trial — will be replaced by real trial logic.
-  timeline.push(makePsychophysicsTrial({
-    choices: "ALL_KEYS",
-    stimuli: () => {
-      const { positions } = getRingPositions(6, 120);
-      const stims = [];
+  // ── Experiment trials ──
+  const { practice, experimental } = assembleExperiment();
 
-      for (let i = 0; i < 3; i++) {
-        const orientation = Math.random() * 360;
-        stims.push(makeOrientedTriangleStimulus(positions[i].x, positions[i].y, orientation));
-      }
+  // Practice block
+  timeline.push(...practice);
 
-      for (let i = 3; i < 6; i++) {
-        const hue = Math.random() * 360;
-        stims.push(makeColorPatchStimulus(positions[i].x, positions[i].y, hue));
-      }
-
-      stims.push(makeFixationCross());
-
-      return stims;
-    },
-  }));
+  // Experimental mini-blocks
+  timeline.push(...experimental);
 
   timeline.push({
     type: HtmlKeyboardResponsePlugin,

@@ -30,8 +30,8 @@ import { Settings } from "../../ExperimentSettings.js";
 export function makeOrientedTriangleStimulus(x, y, orientationDeg, opts = {}) {
   const { lightness, chroma } = Settings.stimuli;
   const {
-    base = 19,
-    height = 33,
+    base = 28,
+    height = 50,
     fillColor = `oklch(${lightness} 0 0)`,
     lineColor = `oklch(${lightness} 0 0)`,
     lineWidth = 1,
@@ -102,7 +102,7 @@ export function makeOrientedTriangleStimulus(x, y, orientationDeg, opts = {}) {
  */
 export function makeColorPatchStimulus(x, y, hueDeg, opts = {}) {
   const {
-    radius = 10,
+    radius = 15,
     lightness = Settings.stimuli.lightness,
     chroma = Settings.stimuli.chroma,
   } = opts;

@@ -1,8 +1,9 @@
 /**
- * Trial generation for the cross-set–size experiment.
+ * Experiment design for the cross-set–size experiment.
  *
- * Builds the full pool of 320 experimental trials + 10 practice trials
- * based on the condition structure defined in ExperimentGoal.md.
+ * Defines the condition table and a function to generate a single trial
+ * specification. Does not handle trial counts, block structure, practice,
+ * or rendering — those belong in experimentAssembly.js and trialRendering.js.
  *
  * ── Condition structure ──────────────────────────────────────────────────
  *
@@ -10,31 +11,25 @@
  * that defines the condition and from which most items are drawn.
  *
  * Per primary dimension (orientation and color each):
- *   3-only:  3 items of primary dimension                  → 20 trials
- *   4-only:  4 items of primary dimension                  → 20 trials
- *   6-only:  6 items of primary dimension                  → 20 trials
- *   3+1:     3 primary + 1 intruder of the other dimension → 80 trials
- *   3+3:     3 primary + 3 of the other dimension          → 20 trials (shared)
+ *   3-only:  3 items of primary dimension
+ *   4-only:  4 items of primary dimension
+ *   6-only:  6 items of primary dimension
+ *   3+1:     3 primary + 1 intruder of the other dimension
+ *   3+3:     3 primary + 3 of the other dimension (shared)
  *
- * The 3+3 condition is shared between dimensions: 40 total trials,
- * 20 probing an orientation item, 20 probing a color item.
- *
- * Grand total: 140 (orientation) + 140 (color) + 40 (shared 3+3) = 320
- * Practice: 1 trial per condition × 2 dimensions = 10
+ * The 3+3 condition is shared between dimensions: probing orientation
+ * and probing color are separate conditions.
  *
  * ── Probing rule ─────────────────────────────────────────────────────────
  *
  * Each item is equally likely to be probed. The probed item index is
- * assigned by cycling through all positions across trials within each
- * condition, so every position is probed an equal number of times.
+ * passed in by the caller (experimentAssembly.js handles cycling).
  *
  * ── Feature value sampling ───────────────────────────────────────────────
  *
  * Within each dimension, feature values (hue or orientation in degrees)
  * maintain a minimum pairwise distance of 30°. Implemented via gap-based
- * sampling: partition (360 − n×30)° of "slack" into n random gaps, add
- * the 30° baseline to each, then place values around the circle from a
- * random starting point.
+ * sampling in featureSampling.js.
  */
 
 import { sampleFeatureValues } from "./featureSampling.js";
@@ -43,7 +38,7 @@ const MIN_DISTANCE_DEG = 30;
 
 // ── Condition definitions ────────────────────────────────────────────────
 
-const CONDITIONS = [
+export const CONDITIONS = [
   // Pure orientation conditions
   { name: "orientation_3only", primary: "orientation", nPrimary: 3, nIntrude: 0, nTrials: 20 },
   { name: "orientation_4only", primary: "orientation", nPrimary: 4, nIntrude: 0, nTrials: 20 },
@@ -70,12 +65,17 @@ const CONDITIONS = [
  * @param {number} probeIndex Which item index (0-based) to probe.
  * @returns {object} Trial specification with all information needed to render.
  */
-function generateTrial(condition, probeIndex) {
+export function generateTrial(condition, probeIndex) {
   const totalItems = condition.nPrimary + condition.nIntrude;
+
+  // Items are ordered [primary, primary, ..., intruder, intruder, ...].
+  // If probeIndex falls within the primary range → probe the primary dimension.
+  // Otherwise → probe the opposite dimension (i.e. the intruder's dimension).
   const probeDimension = probeIndex < condition.nPrimary ? condition.primary
     : (condition.primary === "orientation" ? "color" : "orientation");
 
-  // Sample feature values for each dimension independently
+  // Figure out how many items of each dimension we need, regardless of
+  // which one is "primary". If a dimension has 0 items, it gets no values.
   const nOrientation = condition.primary === "orientation" ? condition.nPrimary : condition.nIntrude;
   const nColor = condition.primary === "color" ? condition.nPrimary : condition.nIntrude;
 
@@ -113,36 +113,4 @@ function generateTrial(condition, probeIndex) {
     probeFeatureValue: items[probeIndex].featureValue,
     items,
   };
-}
-
-/**
- * Generate the full pool of experimental trials (320) and practice trials (10).
- *
- * Probe indices are cycled across trials within each condition so that
- * every item position is probed equally often.
- *
- * @returns {{ experimental: object[], practice: object[] }}
- */
-export function generateTrialPool() {
-  const experimental = [];
-
-  for (const condition of CONDITIONS) {
-    const totalItems = condition.nPrimary + condition.nIntrude;
-
-    for (let i = 0; i < condition.nTrials; i++) {
-      const probeIndex = i % totalItems;
-      experimental.push(generateTrial(condition, probeIndex));
-    }
-  }
-
-  // Practice: 1 trial per condition (10 total)
-  const practice = [];
-
-  for (const condition of CONDITIONS) {
-    const totalItems = condition.nPrimary + condition.nIntrude;
-    const probeIndex = Math.floor(Math.random() * totalItems);
-    practice.push(generateTrial(condition, probeIndex));
-  }
-
-  return { experimental, practice };
 }
