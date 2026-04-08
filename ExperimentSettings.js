@@ -45,7 +45,7 @@ export const Settings = {
     // Global OKLCH lightness and chroma for all stimulus items.
     // These are used by the stimulus factories in stimuli.js as defaults.
     lightness: 0.8,
-    chroma: 0.07,
+    chroma: 0.1,
   },
 
   // ── Study Information (used by consent pages) ──────────────────────────────

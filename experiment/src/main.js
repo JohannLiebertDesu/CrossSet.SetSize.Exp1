@@ -17,6 +17,7 @@ jsPsychPsychophysics.info.parameters.canvas_offsetY.default = 0;
 
 import { getRingPositions } from "../../functions/experiment/ringPositions.js";
 import { makeOrientedTriangleStimulus, makeColorPatchStimulus, makeFixationCross } from "../../functions/experiment/stimuli.js";
+import { makePsychophysicsTrial } from "../../functions/experiment/trialTemplates.js";
 
 // Since we load the following import after the jspsych/css/jspsych.css import, it always wins 
 // -> that way for modifications of the css we never need to kack jsPsych's own CSS
@@ -64,11 +65,7 @@ function makeTimeline(jsPsych, blurMonitor) {
 
   // ── Visual test: render stimuli on the invisible ring ──
   // This is a temporary demo trial — will be replaced by real trial logic.
-  timeline.push({
-    type: jsPsychPsychophysics,
-    background_color: Settings.display.trialBackgroundColor,
-    css_classes: "canvas-trial",
-    response_type: "key",
+  timeline.push(makePsychophysicsTrial({
     choices: "ALL_KEYS",
     stimuli: () => {
       const { positions } = getRingPositions(6, 120);
@@ -88,7 +85,7 @@ function makeTimeline(jsPsych, blurMonitor) {
 
       return stims;
     },
-  });
+  }));
 
   timeline.push({
     type: HtmlKeyboardResponsePlugin,

@@ -21,10 +21,12 @@
 | **Viewing distance** | 71 cm | ~47 cm | Uncontrolled |
 | **Background** | Gray, RGB (128,128,128) | Homogeneous gray | Gray, `oklch(0.6 0 0)` |
 | **Stimulus shape** | Colored triangles (features bound) | Triangles + circles depending on experiment | Oriented triangles **or** colored patches (single-feature objects, like Markov Exp 2) |
-| **Stimulus size** | Not specified | Triangle sides 0.6°, 1.2°, 1.2° | Small, scaled to screen, kept near fixation so all items are visible without eye movements |
-| **Color space** | CIE L\*a\*b\* | HSV (360°) | OKLCH |
+| **Stimulus size / equating** | Not specified | Triangle sides 0.6°, 1.2°, 1.2°; no perceptual equating reported | Equal **surface area** between triangles and colored patches (bounding-extent matching rejected as incompatible with oriented triangles); small, scaled to screen |
+| **Color / lightness specification** | CIE L\*a\*b\* (8 fixed colors) | HSV (360°), white triangles on gray | OKLCH; both patches and triangles at **L = 0.8**; patches at **C = 0.1** (in-gamut for all hues); triangles achromatic (C = 0) |
 | **Orientation space** | 8 fixed values (45° steps) | Continuous 360° | Continuous 360° |
 | **Item locations** | 8 positions on two invisible circles | Imaginary circle, radius 4.35° | Invisible circle around screen center, equal angular spacing between items, random rotational offset of the whole array |
+| **Spatial arrangement (mixed-dimension trials)** | N/A | Color and orientation objects alternating on the circle | **3+3 trials: interleaved** (alternating color, orientation, color, orientation, ...). 3+1 trials: 4 evenly-spaced slots, intruder randomly assigned to one of them. |
+| **Feature value sampling** | Random from fixed sets | Rotational scheme: first value random, others at ±120° with ±30° jitter (3-item displays); analogous logic presumed for 6-item | **Pairwise minimum 30° distance** within each dimension, no constraint across dimensions. Implemented via gap-based sampling: partition (360 − n×30)° into n random gaps, add 30° baseline to each, place around the circle from a random starting rotation. |
 | **Position jitter** | ±0.5° | ±30° (Exp 1, 3); ±15° (Exp 2) | None beyond array rotation; equal spacing rigidly preserved |
 | **Cue display** | 1000 ms pre-cue | None | None |
 | **Sample duration** | 1000 ms | 500 ms | **150 ms × number of items** (450, 600, or 900 ms) |
