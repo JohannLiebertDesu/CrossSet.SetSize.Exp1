@@ -60,7 +60,10 @@ export function makeOrientedTriangleStimulus(x, y, orientationDeg, opts = {}) {
 
     drawFunc: (stimulus, canvas, ctx) => {
 
-      const rad = (stimulus.orientationDeg * Math.PI) / 180;
+      // +90° offset: the unrotated apex points up (negative y), but atan2's
+      // 0° is rightward. Adding 90° rotates the apex from up to right,
+      // so the triangle points toward the mouse position.
+      const rad = ((stimulus.orientationDeg + 90) * Math.PI) / 180;
       const cosA = Math.cos(rad);
       const sinA = Math.sin(rad);
       const rotated = unrotated.map((p) => ({

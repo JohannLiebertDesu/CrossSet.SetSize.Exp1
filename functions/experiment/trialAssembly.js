@@ -115,7 +115,10 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
     data: { ...sharedData, phase: "retention" },
   });
 
-  // 4. Recall — 
+  // 4. Recall — response wheel + invisible probe at probed item position.
+  //    Two-click protocol: first click reveals probe and starts tracking,
+  //    second click confirms. Stimuli created here (not in a function) so
+  //    getCurrentTrial().stimuli[n].instance works in mouse handlers.
 
   const probePos = positions[spec.probeIndex];
   const wheelOffset = Math.random() * 360;
@@ -124,13 +127,52 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
   let isActive = false;
   let selectedAngle = undefined;
 
+  // The wheel is drawn starting at 0° (rightward on screen). The wheelOffset
+  // shifts which hue/orientation value sits at each screen position — e.g. if
+  // offset=30, hue 30 is drawn at the right, and hue 0 shifts slightly upward.
+  // This prevents participants from learning fixed hue-to-position mappings.
   const wheel = spec.probeDimension === "color"
     ? createColorWheel(probePos.x, probePos.y, { offset: wheelOffset })
     : createOrientationWheel(probePos.x, probePos.y, { offset: wheelOffset });
+
+  // Probe starts invisible (matching background) — revealed on first click.
   const probe = spec.probeDimension === "color"
     ? makeColorPatchStimulus(probePos.x, probePos.y, 0, { lightness: Settings.display.backgroundLightness, chroma: 0 })
     : makeOrientedTriangleStimulus(probePos.x, probePos.y, 0, { lightness: Settings.display.backgroundLightness });
   const cross = makeFixationCross();
+
+  // Compute angle and update probe appearance from a mouse event.
+  // Shared by mouse_down_func (first click) and mouse_move_func (tracking).
+  function updateProbeFromMouse(e) {
+    const live = jsPsych.getCurrentTrial().stimuli[1].instance;
+    const dx = e.offsetX - live.currentX;
+    const dy = e.offsetY - live.currentY;
+
+    // deg = raw screen angle of the mouse relative to probe centre.
+    // atan2 convention: 0° = right, 90° = down, 270° = up.
+    let deg = Math.atan2(dy, dx) * 180 / Math.PI;
+    if (deg < 0) deg += 360;
+
+    // The mouse only knows the screen position, not which hue/orientation is
+    // displayed there. Adding wheelOffset converts from screen angle to feature
+    // value — because the wheel drawing shifted all values by that offset.
+    // E.g. if offset=30 and mouse is at 0° (right), the hue there is 30, not 0.
+    selectedAngle = (deg + wheelOffset + 360) % 360;
+
+    if (spec.probeDimension === "orientation") {
+      live.fill_color = `oklch(${lightness} 0 0)`;
+      live.line_color = `oklch(${lightness} 0 0)`;
+      // The preview triangle points where the mouse is (raw screen angle),
+      // not at the offset-adjusted value. The +90° in drawFunc converts from
+      // atan2 convention (0°=right) to the triangle's native up-pointing apex.
+      live.orientationDeg = deg;
+    } else {
+      // For color, selectedAngle IS the hue to display — the offset is already
+      // baked in, matching what's shown on the wheel at that screen position.
+      live.fill_color = `oklch(${lightness} ${chroma} ${selectedAngle})`;
+      live.line_color = `oklch(${lightness} ${chroma} ${selectedAngle})`;
+    }
+  }
 
   const recall = makePsychophysicsTrial({
     trialID,
@@ -142,42 +184,18 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
 
     mouse_down_func: (e) => {
       if (!isActive) {
-        isActive = true; // First click enables mouse_move tracking
+        isActive = true;
+        updateProbeFromMouse(e); // Reveal probe immediately at click position
       } else {
         // Second click terminates the trial
         document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "a" }));
         document.body.dispatchEvent(new KeyboardEvent("keyup", { key: "a" }));
-      }},
+      }
+    },
 
     mouse_move_func: (e) => {
-      if (!isActive) {
-        return // As long as no click was made, ignore the mouse position and movement
-      } else {
-        const live = jsPsych.getCurrentTrial().stimuli[1].instance // get the probe
-
-        const { offsetX, offsetY } = e; // These are the mouse position values, provided as absolute canvas-pixel coordinates from the start (no origin_center applies here)
-        const cx = live.currentX; // Canvas-pixel x
-        const cy = live.currentY; // Canvas-pixel y
-
-        // Compute mouse angle around the anchor center
-        const deg = Math.atan2(offsetY - cy, offsetX - cx) * 180 / Math.PI;
-        selectedAngle = (deg + wheelOffset + 360) % 360 // Add the offset
-
-        // Orientation trial
-        if (spec.probeDimension === "orientation") {
-            live.fill_color = `oklch(${lightness} 0 0)`;
-            live.line_color = `oklch(${lightness} 0 0)`;
-            live.orientationDeg = selectedAngle;
-
-        return;
-
-      } else {
-          live.fill_color = `oklch(${lightness} ${chroma} ${selectedAngle})`;
-          live.line_color = `oklch(${lightness} ${chroma} ${selectedAngle})`;
-
-        return
-      }
-      }
+      if (!isActive) return;
+      updateProbeFromMouse(e);
     },
 
     on_finish: (data) => {

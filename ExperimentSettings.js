@@ -59,6 +59,11 @@ export const Settings = {
     chroma: 0.1,
   },
 
+  responseWheel: {
+    innerRadius: 40,
+    outerRadius: 63,
+  },
+
   // ── Study Information (used by consent pages) ──────────────────────────────
   study: {
     // What the study examines — shown under "What this study is about".

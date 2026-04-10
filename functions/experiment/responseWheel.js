@@ -37,8 +37,8 @@ import { Settings } from "../../ExperimentSettings.js";
 export function createColorWheel(x, y, opts = {}) {
   const { lightness, chroma } = Settings.stimuli;
   const {
-    outerRadius = 60,
-    innerRadius = 35,
+    outerRadius = Settings.responseWheel.outerRadius,
+    innerRadius = Settings.responseWheel.innerRadius,
     offset = Math.random() * 360,
   } = opts;
 
@@ -55,6 +55,12 @@ export function createColorWheel(x, y, opts = {}) {
       const cx = stimulus.currentX;
       const cy = stimulus.currentY;
 
+      // Draw 360 arc segments around the wheel. ctx.arc starts at 0 radians =
+      // rightward (3 o'clock) — this is the canvas API's convention, and it
+      // matches atan2's 0° = right. So segment 0 sits at the right of the wheel.
+      // The offset shifts which hue is drawn at each position: at segment 0 (right),
+      // the hue is 0 + offset, not 0. This is why atan2 + offset recovers the
+      // correct hue when the mouse clicks on a screen position.
       const numSegments = 360;
       const angleStep = (2 * Math.PI) / numSegments;
 
@@ -91,10 +97,11 @@ export function createColorWheel(x, y, opts = {}) {
  */
 export function createOrientationWheel(x, y, opts = {}) {
   const {
-    outerRadius = 60,
-    innerRadius = 35,
+    outerRadius = Settings.responseWheel.outerRadius,
+    innerRadius = Settings.responseWheel.innerRadius,
     offset = Math.random() * 360,
-    numGraduations = 16,
+    numGraduations = 12,
+    lightness = Settings.stimuli.lightness,
   } = opts;
 
   return {
@@ -115,12 +122,12 @@ export function createOrientationWheel(x, y, opts = {}) {
       ctx.arc(cx, cy, stimulus.outerRadius, 0, 2 * Math.PI);
       ctx.arc(cx, cy, stimulus.innerRadius, 2 * Math.PI, 0, true);
       ctx.closePath();
-      ctx.fillStyle = "black";
+      ctx.fillStyle = `oklch(${lightness} 0 0)`;
       ctx.fill();
 
       // Graduation lines
       const angleStep = (2 * Math.PI) / numGraduations;
-      ctx.strokeStyle = "oklch(0.9 0 0)";
+      ctx.strokeStyle = "oklch(1 0 0)";
       ctx.lineWidth = 2;
 
       for (let i = 0; i < numGraduations; i++) {
