@@ -124,22 +124,21 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
   let isActive = false;
   let selectedAngle = undefined;
 
+  const wheel = spec.probeDimension === "color"
+    ? createColorWheel(probePos.x, probePos.y, { offset: wheelOffset })
+    : createOrientationWheel(probePos.x, probePos.y, { offset: wheelOffset });
+  const probe = spec.probeDimension === "color"
+    ? makeColorPatchStimulus(probePos.x, probePos.y, 0, { lightness: Settings.display.backgroundLightness, chroma: 0 })
+    : makeOrientedTriangleStimulus(probePos.x, probePos.y, 0, { lightness: Settings.display.backgroundLightness });
+  const cross = makeFixationCross();
+
   const recall = makePsychophysicsTrial({
     trialID,
     blockID,
     practice,
     response_type: "key",
     choices: ["a"],
-    stimuli: () => {
-      const wheel = spec.probeDimension === "color" 
-        ? createColorWheel(probePos.x, probePos.y, {offset: wheelOffset})
-        : createOrientationWheel(probePos.x, probePos.y, {offset: wheelOffset}); 
-      const probe = spec.probeDimension === "color"
-        ? makeColorPatchStimulus(probePos.x, probePos.y, 0, { lightness: 0.6, chroma: 0 })
-        : makeOrientedTriangleStimulus(probePos.x, probePos.y, 0, { lightness: Settings.display.backgroundLightness })
-      const cross = makeFixationCross()
-      return[wheel, probe, cross]
-    },
+    stimuli: [wheel, probe, cross],
 
     mouse_down_func: (e) => {
       if (!isActive) {
