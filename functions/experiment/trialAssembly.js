@@ -129,6 +129,8 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
 
   let isActive = false;
   let selectedAngle = undefined;
+  let firstClickTime = null;
+  let trialStartTime = null;
 
   // The wheel is drawn starting at 0° (rightward on screen). The wheelOffset
   // shifts which hue/orientation value sits at each screen position — e.g. if
@@ -184,11 +186,15 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
     response_type: "key",
     choices: ["F24"],
     stimuli: [wheel, probe, cross],
-    on_start: () => { document.body.style.cursor = "default"; },
+    on_start: () => {
+      document.body.style.cursor = "default";
+      trialStartTime = performance.now();
+    },
 
     mouse_down_func: (e) => {
       if (!isActive) {
         isActive = true;
+        firstClickTime = performance.now();
         updateProbeFromMouse(e); // Reveal probe immediately at click position
       } else {
         // Second click terminates the trial
@@ -208,6 +214,9 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
       data.selectedAngle = chosenAngle;
       data.signedError = signedAngleDiff(chosenAngle, spec.probeFeatureValue);
       data.absoluteError = Math.abs(data.signedError);
+      data.firstClickRt = firstClickTime && trialStartTime
+        ? firstClickTime - trialStartTime
+        : null;
     },
 
     data: { ...sharedData, phase: "recall" },
