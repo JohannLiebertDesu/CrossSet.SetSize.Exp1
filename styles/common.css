@@ -184,6 +184,12 @@
   margin: 0 auto;
   padding: 1rem 1.5rem;
   text-align: center;
+  animation: fadeIn 150ms ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Left-aligned text variant — use on pages with longer paragraphs */

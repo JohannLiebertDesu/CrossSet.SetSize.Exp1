@@ -6,8 +6,10 @@
 - [x] Break screens between mini-blocks
 - [x] Hide mouse cursor during fixation/sample/retention, show only during recall
 - [x] Change synthetic key for recall trial termination from "a" to something less likely to be pressed accidentally (now F24)
-- [ ] Check what happens when participant double-clicks without moving the mouse (does selectedAngle get a valid value?)
-- [ ] Instructions (replace template placeholder)
+- [x] Check what happens when participant double-clicks without moving the mouse (stores the angle from the click position — valid response)
+- [x] Store firstClickRt in recall data
+- [x] Instructions (replace template placeholder)
+- [ ] Transition screen between practice and main experiment
 - [ ] Practice feedback
 - [ ] Consent/debrief content (study-specific wording)
 - [ ] ExperimentSettings.js study info (description, task, duration)

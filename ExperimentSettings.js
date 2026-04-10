@@ -46,7 +46,7 @@ export const Settings = {
 
   // ── Trial Timing ───────────────────────────────────────────────────────────
   timing: {
-    fixationDurationMs: 1000,
+    fixationDurationMs: 500,
     sampleDurationPerItemMs: 150,
     retentionDurationMs: 1000,
   },

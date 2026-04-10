@@ -26,55 +26,123 @@ export function makeInstructions() {
     type: InstructionsPlugin,
     pages: [
 
-      // ── Page 1: Text-only introduction ──
+      // ── Page 1: Welcome ──
       `<div class="instructions-page">
-        <h2>Welcome to the Experiment</h2>
+        <h2>Welcome</h2>
         <p>
-          In this experiment you will [brief overview of the task].
-          Please read these instructions carefully.
+          In this experiment, you will be asked to remember visual items and
+          report one of them from memory. Please read these instructions carefully.
         </p>
       </div>`,
 
-      // ── Page 2: Full-page slide image ──
-      // Uncomment and replace the src with your actual slide path.
-      // `<div class="instructions-page">
-      //   <img class="instructions-slide" src="assets/instructions/slide1.gif" alt="Instructions slide 1" />
-      // </div>`,
+      // ── Page 2: The stimuli (text + two example images side by side) ──
+      `<div class="instructions-page text-left" style="display: flex; flex-direction: row; gap: 2rem; align-items: center; max-width: 1100px;">
+        <div style="flex: 1;">
+          <h2>What You Will See</h2>
+          <p>
+            On each trial, a set of items will briefly appear around a central
+            fixation cross. There are two types of items:
+          </p>
+          <ul>
+            <li><strong>Oriented triangles</strong> — grey triangles pointing in different directions.</li>
+            <li><strong>Coloured patches</strong> — small patches of different colours.</li>
+          </ul>
+          <p>
+            Some trials will show only one type, while others will show a mix of both.
+          </p>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+          <p style="margin: 0; font-weight: bold;">Example 1</p>
+          <img src="assets/3_ExampleStimuli.png" alt="Example stimulus display 1" style="max-height: 30vh; border-radius: 6px;" />
+          <p style="margin: 0.5rem 0 0; font-weight: bold;">Example 2</p>
+          <img src="assets/3_1_ExampleStimuli.png" alt="Example stimulus display 2" style="max-height: 30vh; border-radius: 6px;" />
+        </div>
+      </div>`,
 
-      // ── Page 3: Image with text above/below ──
-      // `<div class="instructions-page">
-      //   <p>On each trial you will see the following display:</p>
-      //   <img class="instructions-figure" src="assets/instructions/example-trial.png" alt="Example trial" />
-      //   <p class="instructions-caption">Example of a single trial.</p>
-      //   <p>Your task is to [describe what to do].</p>
-      // </div>`,
+      // ── Page 3: Trial sequence (text + four step images) ──
+      `<div class="instructions-page text-left" style="display: flex; flex-direction: row; gap: 2rem; align-items: center; max-width: 1100px;">
+        <div style="flex: 1;">
+          <h2>Trial Sequence</h2>
+          <p>Each trial follows the same sequence:</p>
+          <ol>
+            <li>A <strong>fixation cross</strong> appears at the centre of the screen. Please keep your eyes on it.</li>
+            <li>The items appear <strong>briefly</strong> around the cross. Try to remember them.</li>
+            <li>The screen goes blank for a short delay.</li>
+            <li>A <strong>response wheel</strong> appears at the location of one of the items.</li>
+          </ol>
+          <p>
+            Any item is equally likely to be tested, so try to remember
+            <strong>all</strong> of them as well as you can.
+          </p>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.3rem; align-items: center;">
+          <p style="margin: 0; font-weight: bold;">1. Fixation</p>
+          <img src="assets/FixationCross.png" alt="Fixation cross" style="max-height: 14vh; border-radius: 6px;" />
+          <p style="margin: 0.3rem 0 0; font-weight: bold;">2. Stimulus display</p>
+          <img src="assets/3_1_ExampleStimuli.png" alt="Stimulus display" style="max-height: 14vh; border-radius: 6px;" />
+          <p style="margin: 0.3rem 0 0; font-weight: bold;">3. Retention</p>
+          <img src="assets/FixationCross.png" alt="Retention interval" style="max-height: 14vh; border-radius: 6px;" />
+          <p style="margin: 0.3rem 0 0; font-weight: bold;">4. Response</p>
+          <img src="assets/ColorResponseWheelEmpty.png" alt="Response wheel" style="max-height: 14vh; border-radius: 6px;" />
+        </div>
+      </div>`,
 
-      // ── Page 4: Text-only, left-aligned ──
+      // ── Page 4: How to respond (text + two response wheel examples) ──
+      `<div class="instructions-page text-left" style="display: flex; flex-direction: row; gap: 2rem; align-items: center; max-width: 1100px;">
+        <div style="flex: 1;">
+          <h2>How to Respond</h2>
+          <p>
+            Your task is to reproduce the remembered feature (colour or orientation)
+            of the item that was at the wheel's location.
+          </p>
+          <ol>
+            <li><strong>Click once</strong> on the wheel to select your initial response. A preview of your selection will appear.</li>
+            <li><strong>Move the mouse</strong> to adjust your response. The preview updates in real time.</li>
+            <li><strong>Click again</strong> to confirm and move on to the next trial.</li>
+          </ol>
+          <p>
+            Try to be as accurate as possible. There is no time limit for responding.
+          </p>
+        </div>
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+          <p style="margin: 0; font-weight: bold;">Orientation response</p>
+          <img src="assets/OrientationResponseWheelPopulated.png" alt="Orientation response wheel example" style="max-height: 30vh; border-radius: 6px;" />
+          <p style="margin: 0.5rem 0 0; font-weight: bold;">Colour response</p>
+          <img src="assets/ColorResponseWheelPopulated.png" alt="Colour response wheel example" style="max-height: 30vh; border-radius: 6px;" />
+        </div>
+      </div>`,
+
+      // ── Page 5: Important notes ──
       `<div class="instructions-page text-left">
-        <h2>Key Rules</h2>
-        <p>
-          Please keep the following in mind:
-        </p>
+        <h2>Important</h2>
         <ul>
-          <li>[Rule 1 — e.g., respond as quickly and accurately as possible.]</li>
-          <li>[Rule 2 — e.g., keep your eyes on the fixation cross.]</li>
-          <li>[Rule 3 — e.g., use only the specified keys.]</li>
+          <li>Keep your eyes on the <strong>fixation cross</strong> while the items are on screen.</li>
+          <li>The items appear only <strong>very briefly</strong> — stay focused.</li>
+          <li>Please do <strong>not</strong> leave the browser tab during the experiment.</li>
+          <li>The experiment consists of <strong>8 blocks</strong> with short breaks in between.</li>
         </ul>
       </div>`,
 
-      // ── Final page ──
+      // ── Page 6: Practice announcement ──
       `<div class="instructions-page">
-        <h2>Ready?</h2>
+        <h2>Practice</h2>
         <p>
-          If you have any questions, please re-read the instructions using the
-          "Previous" button. Otherwise, press "Next" to begin.
+          Before the experiment begins, you will complete
+          <strong>10 practice trials</strong> to familiarise yourself with the task.
+          After each practice trial, you will receive feedback on your accuracy.
+        </p>
+        <p>
+          If you have any questions, use the "Previous" button to re-read
+          the instructions. Otherwise, press "Begin" to start the practice.
         </p>
       </div>`,
 
     ],
+    css_classes: "wide-instructions",
     show_clickable_nav: true,
     allow_backward: true,
     button_label_previous: "Previous",
     button_label_next: "Next",
+    button_label_finish: "Begin",
   };
 }
