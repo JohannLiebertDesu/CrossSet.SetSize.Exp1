@@ -22,6 +22,7 @@
 
 import { CONDITIONS, generateTrial } from "./experimentDesign.js";
 import { assembleTrialSequence } from "./trialAssembly.js";
+import { makeBreakTrial } from "../global/breakScreen.js";
 
 // ── Shuffling utility ────────────────────────────────────────────────────
 
@@ -113,6 +114,11 @@ export function assembleExperiment(jsPsych, nBlocks = 8, trialsPerBlock = 40) {
 
     for (const spec of blockSpecs) {
       experimental.push(...assembleTrialSequence(spec, trialID++, block + 1, false, jsPsych));
+    }
+
+    // Break screen after each block except the last
+    if (block < nBlocks - 1) {
+      experimental.push(makeBreakTrial(block + 1, nBlocks, jsPsych));
     }
   }
 

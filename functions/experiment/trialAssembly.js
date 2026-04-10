@@ -87,6 +87,7 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
     choices: "NO_KEYS",
     trial_duration: fixationDurationMs,
     stimuli: [makeFixationCross()],
+    on_start: () => { document.body.style.cursor = "none"; },
     data: { ...sharedData, phase: "fixation" },
   });
 
@@ -183,6 +184,7 @@ export function assembleTrialSequence(spec, trialID, blockID, practice, jsPsych,
     response_type: "key",
     choices: ["a"],
     stimuli: [wheel, probe, cross],
+    on_start: () => { document.body.style.cursor = "default"; },
 
     mouse_down_func: (e) => {
       if (!isActive) {
