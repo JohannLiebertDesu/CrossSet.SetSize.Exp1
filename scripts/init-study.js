@@ -79,7 +79,7 @@ const jas = {
         uuid: randomUUID(),
         title: "Experiment",
         htmlFilePath: "experiment.html",
-        reloadable: true,
+        reloadable: false,
         active: true,
         comments: "",
         jsonData: null,
